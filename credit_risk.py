@@ -99,7 +99,7 @@ if __name__=="__main__":
     """
     Computing VIF for elimination of Multi-collinearity
     We are considering the maximum threshold of 6
-For rejecting the numerical features
+   For rejecting the numerical features
     """
     
     col_index = 0
