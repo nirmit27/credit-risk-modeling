@@ -94,7 +94,8 @@ if __name__=="__main__":
         print(f"{cat_col}\t->\t{pval}")    
     # We will accept ALL the 5 categorical features since they all have a p-value < 0.05
     
-    
+   
+ 
     """
     Computing VIF for elimination of Multi-collinearity
     We are considering the maximum threshold of 6 for rejecting the numerical features.
