@@ -13,6 +13,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from scipy.stats import chi2_contingency as chi2
+
 
 def count_nulls(df: pd.DataFrame) -> list[str]:
     col_list: list[str] = []
@@ -61,13 +63,23 @@ if __name__=="__main__":
     df = pd.merge(df1, df2, how="inner", left_on="PROSPECTID", right_on="PROSPECTID")
     
     # Dividing the features into categorical and numerical features seperately
-    cat_feats: list[str] = [col for col in df.columns if df[col].dtype == "object"]
-    num_feats: list[str] = [col for col in df.columns if df[col].dtype != "object"]
-    
-    # Determining the association between MARITALSTATUS and Approved_Flag
-    
-    
+    cat_feats: list[str] = [col for col in df.columns if df[col].dtype == "object"][:-1]
+    num_feats: list[str] = [col for col in df.columns if df[col].dtype != "object"][1:]
+       
     # Outputting the merged dataset
     df.to_excel(f"{os.path.dirname(os.getcwd())}\\Datasets\\case_study_merged.xlsx")
+    
+    # Inputting the dataset
+    df = pd.read_excel(paths[2], index_col=0)
+    
+    # Identifying the association between categorical features and target using Contingency tables
+    for cat_col in cat_feats:
+        c2_score, pval, _, _ = chi2(pd.crosstab(df[cat_col], df["Approved_Flag"]))
+        print(f"{cat_col}\t->\t{pval}")
+    
+    # We will accept ALL the 5 categorical features since they all have a p-value < 0.05
+    
+    
+    
     
     
