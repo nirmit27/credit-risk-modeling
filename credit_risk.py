@@ -1,5 +1,3 @@
-NEW COMMIT
-
 # -*- coding: utf-8 -*-
 """
 Created on Fri May 24 13:49:47 2024
