@@ -1,3 +1,5 @@
+NEW COMMIT
+
 # -*- coding: utf-8 -*-
 """
 Created on Fri May 24 13:49:47 2024
@@ -13,6 +15,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from scipy.stats import f_oneway as anova
 from scipy.stats import chi2_contingency as chi2
 from statsmodels.stats.outliers_influence import variance_inflation_factor as vif
 
@@ -92,9 +95,9 @@ if __name__=="__main__":
     for cat_col in cat_feats:
         c2_score, pval, _, _ = chi2(pd.crosstab(df[cat_col], df["Approved_Flag"]))
         print(f"{cat_col}\t->\t{pval}")    
-    # We will accept ALL the 5 categorical features since they all have a p-value < 0.05
+    # We will accept ALL the 5 categorical features since they all have a p-value < 0.05 
+ 
     
-   
  
     """
     Computing VIF for elimination of Multi-collinearity
@@ -121,4 +124,23 @@ if __name__=="__main__":
     # Now, we are left with 39 columns of numerical features.
     
     
+    
+    # Computing the association of numerical features with target categories using ANOVA
+    num_feats_cols_kept_2 = []
+        
+    for col in num_feats_cols_kept:
+        a = list(df[col])
+        b = list(df["Approved_Flag"])
+               
+        group_P1 = [value for value, group in zip(a, b) if group == "P1"]
+        group_P2 = [value for value, group in zip(a, b) if group == "P2"]
+        group_P3 = [value for value, group in zip(a, b) if group == "P3"]
+        group_P4 = [value for value, group in zip(a, b) if group == "P4"]
+        
+        f_score, p_value = anova(group_P1, group_P2, group_P3, group_P4)
+    
+        if p_value <= 0.05:
+            num_feats_cols_kept_2.append(col)
+    
+    # Now, we have engineered 37 numerical features.
     
