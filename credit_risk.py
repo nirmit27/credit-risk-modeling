@@ -16,9 +16,13 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor as vi
 
 # from sklearn.compose import ColumnTransformer as CT
 # from sklearn.preprocessing import OneHotEncoder as OHE
+from sklearn.preprocessing import LabelEncoder as LE
 
 from sklearn.model_selection import train_test_split as tts
+
+from sklearn.tree import DecisionTreeClassifier as DTC
 from sklearn.ensemble import RandomForestClassifier as RFC
+from xgboost import XGBClassifier as xgb
 
 from sklearn.metrics import accuracy_score as accuracy
 from sklearn.metrics import precision_recall_fscore_support as prf_support
@@ -179,32 +183,84 @@ if __name__=="__main__":
     df.loc[df["EDUCATION"] == "OTHERS", ["EDUCATION"]] = 1
     df.loc[df["EDUCATION"] == "PROFESSIONAL", ["EDUCATION"]] = 3
     
+    df["EDUCATION"] = df["EDUCATION"].astype(int) 
     cat_feats.pop(1)
     
     # One Hot Encoding for the remaining nominal categorical features
-    df_encoded = pd.get_dummies(df, columns = cat_feats, dtype=int)
+    df_encoded = pd.get_dummies(df, columns = cat_feats, dtype=int) 
     
     
     
-    """ Model Fitting - Random Forest """
+    """" Model Fitting """
     
-    y = df_encoded["Approved_Flag"]
-    X = df_encoded.drop(columns=["Approved_Flag"])
+    X = df_encoded.drop(columns=['Approved_Flag'])
+    y = df_encoded['Approved_Flag']
     
-    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=27)
+    
+    label_encoder = LE()
+    y_encoded = label_encoder.fit_transform(y)
+    
+    X_train, X_test, y_train, y_test = tts(X, y_encoded, test_size=0.2, random_state=27)
+    
+    
+    """ Decison Tree Classifier """
+    
+    model0 = DTC(max_depth=20, min_samples_split=10)
+    model0.fit(X_train, y_train)
+    
+    y_pred0 = model0.predict(X_test)
+    
+    acc = round(accuracy(y_test, y_pred0) * 100, 2)
+    precision, recall, f_score, _ = prf_support(y_test, y_pred0)
+    
+    print(f"Accuracy = {acc}%\nPrecision = {precision}\nRecall = {recall}\nF-score = {f_score}")
+    
+    for i, v in enumerate(y.unique()):
+        print(f"Class {v}:\n\tPrecision = {precision[i]}\n\tRecall = {recall[i]}\n\tF-score = {f_score[i]}")
+    
+    
+    """ Random Forest """
     
     model1 = RFC(n_estimators=200, random_state=40)
     model1.fit(X_train, y_train)
     
-    y_pred = model1.predict(X_test)
+    y_pred1 = model1.predict(X_test)
     
-    acc = round(accuracy(y_test, y_pred) * 100, 2)
-    precision, recall, f_score, _ = prf_support(y_test, y_pred)
+    acc = round(accuracy(y_test, y_pred1) * 100, 2)
+    precision, recall, f_score, _ = prf_support(y_test, y_pred1)
     
     print(f"Accuracy = {acc}%\nPrecision = {precision}\nRecall = {recall}\nF-score = {f_score}")
     
-    # Precision, Recall and F-scores for individual classes ...
     for i, v in enumerate(y.unique()):
         print(f"Class {v}:\n\tPrecision = {precision[i]}\n\tRecall = {recall[i]}\n\tF-score = {f_score[i]}")
-        
+    
+    
+    """ XGBoost """
+    
+    X_train2, X_test2, y_train2, y_test2 = tts(X, y_encoded, test_size=0.3, random_state=27)
+    
+    model2 = xgb(objective='multi:softmax', num_classes = y.nunique())
+    model2.fit(X_train2, y_train2)
+    
+    y_pred2 = model2.predict(X_test2)
+    
+    acc = round(accuracy(y_test2, y_pred2) * 100, 2)
+    precision, recall, f_score, _ = prf_support(y_test2, y_pred2)
+    
+    print(f"Accuracy = {acc}%\nPrecision = {precision}\nRecall = {recall}\nF-score = {f_score}")
+    
+    for i, v in enumerate(y.unique()):
+        print(f"Class {v}:\n\tPrecision = {precision[i]}\n\tRecall = {recall[i]}\n\tF-score = {f_score[i]}")
+    
     # We can observe that P3 class' predictions are very inaccurate.
+        
+    
+    """
+    Model Accuracies (%) :
+        DTC     - 72
+        RFC     - 77
+        XGBoost - 78
+    """
+    
+    
+    
