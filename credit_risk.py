@@ -7,18 +7,22 @@ Created on Fri May 24 13:49:47 2024
 
 import os
 
-import numpy as np
 import pandas as pd
-
-import seaborn as sns
-import matplotlib.pyplot as plt
+# import numpy as np
 
 from scipy.stats import f_oneway as anova
 from scipy.stats import chi2_contingency as chi2
 from statsmodels.stats.outliers_influence import variance_inflation_factor as vif
 
-from sklearn.compose import ColumnTransformer as CT
-from sklearn.preprocessing import OneHotEncoder as OHE
+# from sklearn.compose import ColumnTransformer as CT
+# from sklearn.preprocessing import OneHotEncoder as OHE
+
+from sklearn.model_selection import train_test_split as tts
+from sklearn.ensemble import RandomForestClassifier as RFC
+
+from sklearn.metrics import accuracy_score as accuracy
+from sklearn.metrics import precision_recall_fscore_support as prf_support
+
 
 
 def unique_vals(cols: list[str], df: pd.DataFrame) -> None:
@@ -165,7 +169,6 @@ if __name__=="__main__":
     POST-GRADUATE  = 4
     OTHERS         = 1
     PROFESSIONAL   = 3
-    
     """
     
     df.loc[df["EDUCATION"] == "SSC", ["EDUCATION"]] = 1
@@ -183,4 +186,25 @@ if __name__=="__main__":
     
     
     
+    """ Model Fitting - Random Forest """
     
+    y = df_encoded["Approved_Flag"]
+    X = df_encoded.drop(columns=["Approved_Flag"])
+    
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=27)
+    
+    model1 = RFC(n_estimators=200, random_state=40)
+    model1.fit(X_train, y_train)
+    
+    y_pred = model1.predict(X_test)
+    
+    acc = round(accuracy(y_test, y_pred) * 100, 2)
+    precision, recall, f_score, _ = prf_support(y_test, y_pred)
+    
+    print(f"Accuracy = {acc}%\nPrecision = {precision}\nRecall = {recall}\nF-score = {f_score}")
+    
+    # Precision, Recall and F-scores for individual classes ...
+    for i, v in enumerate(y.unique()):
+        print(f"Class {v}:\n\tPrecision = {precision[i]}\n\tRecall = {recall[i]}\n\tF-score = {f_score[i]}")
+        
+    # We can observe that P3 class' predictions are very inaccurate.
