@@ -17,6 +17,13 @@ from scipy.stats import f_oneway as anova
 from scipy.stats import chi2_contingency as chi2
 from statsmodels.stats.outliers_influence import variance_inflation_factor as vif
 
+from sklearn.compose import ColumnTransformer as CT
+from sklearn.preprocessing import OneHotEncoder as OHE
+
+
+def unique_vals(cols: list[str], df: pd.DataFrame) -> None:
+    for col in cols:
+        print(df[col].unique())
 
 def count_nulls(df: pd.DataFrame) -> list[str]:
     col_list: list[str] = []
@@ -51,6 +58,8 @@ if __name__=="__main__":
     
     
     
+    """ PREPROCESSING """
+    
     # Dropping the rows with NULL values i.e. -99999 in df1
     df1 = df1.loc[df1['Age_Oldest_TL'] != -99999]
     
@@ -70,29 +79,25 @@ if __name__=="__main__":
     
     # Merging df1 and df2 using INNER JOIN so that no NULL values are present in final df
     df = pd.merge(df1, df2, how="inner", left_on="PROSPECTID", right_on="PROSPECTID")
-
+    df.to_excel(f"{os.path.dirname(os.getcwd())}\\Datasets\\case_study_merged.xlsx")
+    
+    df = pd.read_excel(paths[2], index_col=0)
 
     
+
+    """ FEATURE ENGINEERING """
+
     # Dividing the features into categorical and numerical features seperately
     cat_feats: list[str] = [col for col in df.columns if df[col].dtype == "object"][:-1]
     num_feats: list[str] = [col for col in df.columns if df[col].dtype != "object"][1:]
-
-
-       
-    # Outputting the merged dataset
-    df.to_excel(f"{os.path.dirname(os.getcwd())}\\Datasets\\case_study_merged.xlsx")
-
-
-    
-    # Inputting the dataset
-    df = pd.read_excel(paths[2], index_col=0)
 
 
     
     # Identifying the association between categorical features and target using Contingency tables
     for cat_col in cat_feats:
         c2_score, pval, _, _ = chi2(pd.crosstab(df[cat_col], df["Approved_Flag"]))
-        print(f"{cat_col}\t->\t{pval}")    
+        print(f"{cat_col}\t->\t{pval}")
+        
     # We will accept ALL the 5 categorical features since they all have a p-value < 0.05 
  
     
@@ -102,7 +107,7 @@ if __name__=="__main__":
     We are considering the maximum threshold of 6
     For rejecting the numerical features
     """
-    
+
     col_index = 0
     num_feats_cols_kept = []
     num_feats_data = df[num_feats]
@@ -141,4 +146,41 @@ if __name__=="__main__":
             num_feats_cols_kept_2.append(col)
     
     # Now, we have engineered 37 numerical features.
+    df = df[cat_feats + num_feats_cols_kept_2 + ["Approved_Flag"]]
+    
+    
+    
+    """ FEATURE SELECTION """
+    
+    unique_vals(cat_feats, df)
+    
+    # Performing ENCODING for categorical data in categorical features
+    
+    """
+    Ordinal Features :- EDUCATION (arbitrary assignment)
+    SSC            = 1
+    12TH           = 2
+    GRADUATE       = 3
+    UNDER GRADUATE = 3
+    POST-GRADUATE  = 4
+    OTHERS         = 1
+    PROFESSIONAL   = 3
+    
+    """
+    
+    df.loc[df["EDUCATION"] == "SSC", ["EDUCATION"]] = 1
+    df.loc[df["EDUCATION"] == "12TH", ["EDUCATION"]] = 2
+    df.loc[df["EDUCATION"] == "GRADUATE", ["EDUCATION"]] = 3
+    df.loc[df["EDUCATION"] == "UNDER GRADUATE", ["EDUCATION"]] = 3
+    df.loc[df["EDUCATION"] == "POST-GRADUATE", ["EDUCATION"]] = 4
+    df.loc[df["EDUCATION"] == "OTHERS", ["EDUCATION"]] = 1
+    df.loc[df["EDUCATION"] == "PROFESSIONAL", ["EDUCATION"]] = 3
+    
+    cat_feats.pop(1)
+    
+    # One Hot Encoding for the remaining nominal categorical features
+    df_encoded = pd.get_dummies(df, columns = cat_feats, dtype=int)
+    
+    
+    
     
