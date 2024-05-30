@@ -237,7 +237,6 @@ if __name__ == "__main__":
     """ HYPERPARAMETER TUNING """
 
     # Using XGBoost (choosing this model since it gave the best performance so far)
-    # Only taking into consideration 2 hyperparameters instead of 5 due to performance issues.
 
     params_grid = {
         'colsample_by_tree': [0.3, 0.7, 0.9],
@@ -250,7 +249,6 @@ if __name__ == "__main__":
     xgbclf = xgb(objective='multi:softmax', num_class=4)
 
     # Using Grid Search Cross Validation for finding the best params for highest accuracy ...
-
     grid = GSCV(estimator=xgbclf, param_grid=params_grid,
                 cv=3, n_jobs=-1, scoring='accuracy')
     grid.fit(X, y_encoded)
