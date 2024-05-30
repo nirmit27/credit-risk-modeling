@@ -8,17 +8,20 @@ Created on Fri May 24 13:49:47 2024
 import os
 
 import pandas as pd
-# import numpy as np
+import numpy as np
+
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 from scipy.stats import f_oneway as anova
 from scipy.stats import chi2_contingency as chi2
 from statsmodels.stats.outliers_influence import variance_inflation_factor as vif
 
-# from sklearn.compose import ColumnTransformer as CT
-# from sklearn.preprocessing import OneHotEncoder as OHE
+from sklearn.preprocessing import StandardScaler as SS
 from sklearn.preprocessing import LabelEncoder as LE
 
 from sklearn.model_selection import train_test_split as tts
+from sklearn.model_selection import GridSearchCV as GSCV
 
 from sklearn.tree import DecisionTreeClassifier as DTC
 from sklearn.ensemble import RandomForestClassifier as RFC
@@ -28,6 +31,18 @@ from sklearn.metrics import accuracy_score as accuracy
 from sklearn.metrics import precision_recall_fscore_support as prf_support
 
 
+
+def make_pred(model, xtrain, xtest, ytrain, ytest):
+    model.fit(xtrain, ytrain)
+    
+    ypred = model.predict(X_test)
+    
+    acc = accuracy(ytest, ypred) * 100
+    precision, recall, f1_score, _ = prf_support(ytest, ypred)
+    
+    print(f"\nAccuracy = {acc:.2f}%\n")
+    for i, v in enumerate(y.unique()):
+        print(f"Class {v}:\n\tPrecision = {precision[i]:.2f}\n\tRecall = {recall[i]:.2f}\n\tF1-score = {f1_score[i]:.2f}")
 
 def unique_vals(cols: list[str], df: pd.DataFrame) -> None:
     for col in cols:
@@ -87,8 +102,8 @@ if __name__=="__main__":
     
     # Merging df1 and df2 using INNER JOIN so that no NULL values are present in final df
     df = pd.merge(df1, df2, how="inner", left_on="PROSPECTID", right_on="PROSPECTID")
-    df.to_excel(f"{os.path.dirname(os.getcwd())}\\Datasets\\case_study_merged.xlsx")
     
+    df.to_excel(f"{os.path.dirname(os.getcwd())}\\datasets\\case_study_merged.xlsx")
     df = pd.read_excel(paths[2], index_col=0)
 
     
@@ -166,13 +181,13 @@ if __name__=="__main__":
     
     """
     Ordinal Features :- EDUCATION (arbitrary assignment)
-    SSC            = 1
-    12TH           = 2
-    GRADUATE       = 3
-    UNDER GRADUATE = 3
-    POST-GRADUATE  = 4
-    OTHERS         = 1
-    PROFESSIONAL   = 3
+        SSC            = 1
+        12TH           = 2
+        GRADUATE       = 3
+        UNDER GRADUATE = 3
+        POST-GRADUATE  = 4
+        OTHERS         = 1
+        PROFESSIONAL   = 3
     """
     
     df.loc[df["EDUCATION"] == "SSC", ["EDUCATION"]] = 1
@@ -188,9 +203,10 @@ if __name__=="__main__":
     
     # One Hot Encoding for the remaining nominal categorical features
     df_encoded = pd.get_dummies(df, columns = cat_feats, dtype=int) 
+    df_encoded.to_excel(f"{os.path.dirname(os.getcwd())}\\datasets\\case_study_final.xlsx")
     
     
-    
+        
     """" Model Fitting """
     
     X = df_encoded.drop(columns=['Approved_Flag'])
@@ -203,57 +219,25 @@ if __name__=="__main__":
     X_train, X_test, y_train, y_test = tts(X, y_encoded, test_size=0.2, random_state=27)
     
     
-    """ Decison Tree Classifier """
+    # Decision Tree Classifier
     
     model0 = DTC(max_depth=20, min_samples_split=10)
-    model0.fit(X_train, y_train)
+    make_pred(model0, X_train, X_test, y_train, y_test)
     
-    y_pred0 = model0.predict(X_test)
-    
-    acc = round(accuracy(y_test, y_pred0) * 100, 2)
-    precision, recall, f_score, _ = prf_support(y_test, y_pred0)
-    
-    print(f"Accuracy = {acc}%\nPrecision = {precision}\nRecall = {recall}\nF-score = {f_score}")
-    
-    for i, v in enumerate(y.unique()):
-        print(f"Class {v}:\n\tPrecision = {precision[i]}\n\tRecall = {recall[i]}\n\tF-score = {f_score[i]}")
-    
-    
-    """ Random Forest """
+     
+    # Random Forest
     
     model1 = RFC(n_estimators=200, random_state=40)
-    model1.fit(X_train, y_train)
-    
-    y_pred1 = model1.predict(X_test)
-    
-    acc = round(accuracy(y_test, y_pred1) * 100, 2)
-    precision, recall, f_score, _ = prf_support(y_test, y_pred1)
-    
-    print(f"Accuracy = {acc}%\nPrecision = {precision}\nRecall = {recall}\nF-score = {f_score}")
-    
-    for i, v in enumerate(y.unique()):
-        print(f"Class {v}:\n\tPrecision = {precision[i]}\n\tRecall = {recall[i]}\n\tF-score = {f_score[i]}")
+    make_pred(model1, X_train, X_test, y_train, y_test)
     
     
-    """ XGBoost """
-    
-    X_train2, X_test2, y_train2, y_test2 = tts(X, y_encoded, test_size=0.3, random_state=27)
+    # XGBoost
     
     model2 = xgb(objective='multi:softmax', num_classes = y.nunique())
-    model2.fit(X_train2, y_train2)
+    make_pred(model2, X_train, X_test, y_train, y_test)
     
-    y_pred2 = model2.predict(X_test2)
+    # We can observe that P3 class' predictions are very inaccurate.    
     
-    acc = round(accuracy(y_test2, y_pred2) * 100, 2)
-    precision, recall, f_score, _ = prf_support(y_test2, y_pred2)
-    
-    print(f"Accuracy = {acc}%\nPrecision = {precision}\nRecall = {recall}\nF-score = {f_score}")
-    
-    for i, v in enumerate(y.unique()):
-        print(f"Class {v}:\n\tPrecision = {precision[i]}\n\tRecall = {recall[i]}\n\tF-score = {f_score[i]}")
-    
-    # We can observe that P3 class' predictions are very inaccurate.
-        
     
     """
     Model Accuracies (%) :
@@ -263,4 +247,35 @@ if __name__=="__main__":
     """
     
     
+    """ HYPERPARAMETER TUNING """
     
+    # Using XGBoost (choosing this model since it gave the best performance so far)
+    # We'll define our LOSS metric on the basis of whether or not our data is imbalanced.
+    
+    params_grid = {
+            "colsample_bytree": [0.1, 0.3, 0.5, 0.7, 0.9],
+            # "learning_rate": [0.001, 0.01, 0.1, 1],
+            # "max_depth": [3, 5, 8, 10],
+            "alpha": [1, 10, 100],
+            # "n_estimators": [10, 50, 100]
+        }
+    
+    xgbclf = xgb(objective='multi:softmax', num_class=4)
+    
+    grid = GSCV(estimator=xgbclf, param_grid=params_grid, cv=4, n_jobs=-1, verbose=1, scoring='accuracy')
+    grid.fit(X, y_encoded)
+    
+    print("Best hyperparameters :-")
+    for param, value in grid.best_params_.items():
+        print(f"{param} : {value}")
+        
+    print(f"Best score : {(grid.best_score_ * 100):.2f}%")
+    
+    
+    """
+    Best hyperparameters :-
+        alpha            : 10
+        colsample_bytree : 0.7
+    
+    Best score : 77.91%
+    """
