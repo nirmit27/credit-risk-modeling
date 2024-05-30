@@ -1,0 +1,12 @@
+{
+  "name": "credit-risk-modelling",
+  "version": "1.0.0",
+  "description": "An ML model for predicting the amount of risk associated with the extension of credit to a borrower.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
