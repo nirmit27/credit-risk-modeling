@@ -205,6 +205,8 @@ if __name__=="__main__":
     df_encoded = pd.get_dummies(df, columns = cat_feats, dtype=int) 
     df_encoded.to_excel(f"{os.path.dirname(os.getcwd())}\\datasets\\case_study_final.xlsx")
     
+    df_encoded = pd.read_excel("D:\\mishr\\Documents\\Data Science\\credit-risk-modelling\\datasets\\case_study_final.xlsx", index_col=0)
+    
     
         
     """" Model Fitting """
@@ -250,17 +252,19 @@ if __name__=="__main__":
     """ HYPERPARAMETER TUNING """
     
     # Using XGBoost (choosing this model since it gave the best performance so far)
-    # Only taking into consideration 2 hyperparameters instead of 5 due to performance issues.\
+    # Only taking into consideration 2 hyperparameters instead of 5 due to performance issues.
     
     params_grid = {
             "colsample_bytree": [0.1, 0.3, 0.5, 0.7, 0.9],
-            # "learning_rate": [0.001, 0.01, 0.1, 1],
-            # "max_depth": [3, 5, 8, 10],
+            "learning_rate": [0.001, 0.01, 0.1, 1],
+            "max_depth": [3, 5, 8, 10],
             "alpha": [1, 10, 100],
-            # "n_estimators": [10, 50, 100]
+            "n_estimators": [10, 50, 100]
         }
     
     xgbclf = xgb(objective='multi:softmax', num_class=4)
+    
+    # Using Grid Search Cross Validation for finding the best params for highest accuracy ...
     
     grid = GSCV(estimator=xgbclf, param_grid=params_grid, cv=4, n_jobs=-1, verbose=1, scoring='accuracy')
     grid.fit(X, y_encoded)
@@ -274,8 +278,11 @@ if __name__=="__main__":
     
     """
     Best hyperparameters :-
-        alpha            : 10
-        colsample_bytree : 0.7
-    
-    Best score : 77.91%
+        alpha : 1.00
+        colsample_bytree : 0.90
+        learning_rate : 0.10
+        max_depth : 8.00
+        n_estimators : 50.00
+        
+    Best score : 78.00%
     """
