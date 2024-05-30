@@ -255,18 +255,19 @@ if __name__=="__main__":
     # Only taking into consideration 2 hyperparameters instead of 5 due to performance issues.
     
     params_grid = {
-            "colsample_bytree": [0.1, 0.3, 0.5, 0.7, 0.9],
-            "learning_rate": [0.001, 0.01, 0.1, 1],
-            "max_depth": [3, 5, 8, 10],
-            "alpha": [1, 10, 100],
-            "n_estimators": [10, 50, 100]
-        }
+        'colsample_by_tree': [0.3, 0.7, 0.9],
+        'alpha': [10, 20, 30],
+        'n_estimators': [50, 100, 200],
+        'max_depth': [3, 5, 7],
+        'learning_rate': [0.01, 0.1, 1],
+    }
+
     
     xgbclf = xgb(objective='multi:softmax', num_class=4)
     
     # Using Grid Search Cross Validation for finding the best params for highest accuracy ...
     
-    grid = GSCV(estimator=xgbclf, param_grid=params_grid, cv=4, n_jobs=-1, verbose=1, scoring='accuracy')
+    grid = GSCV(estimator=xgbclf, param_grid=params_grid, cv=3, n_jobs=-1, scoring='accuracy')
     grid.fit(X, y_encoded)
     
     print("Best hyperparameters :-")
@@ -276,13 +277,57 @@ if __name__=="__main__":
     print(f"Best score : {(grid.best_score_ * 100):.2f}%")
     
     
+    # Using the iterative approach ...
+    index = 0
+    
+    answers_grid = {
+        'combination': [],
+        'train_accuracy': [],
+        'test_accuracy': [],
+        'colsample_bytree': [],
+        'learning_rate': [],
+        'max_depth': [],
+        'alpha': [],
+        'n_estimators': []
+    }
+
+    for csbt in params_grid['colsample_bytree']:
+        for lr in params_grid['learning_rate']:
+            for md in params_grid['max_depth']:
+                for a in params_grid['alpha']:
+                    for ne in params_grid['n_estimators']:
+
+                        index += 1          
+
+                        model = xgbclf(objective="multi:softmax", num_class=len(np.unique(y_encoded)),
+                        colsample_bytree=csbt, learning_rate=lr, max_depth=md, alpha=a, 
+                        n_estimators=ne)
+
+                        model.fit(X_train, y_train)
+                        
+                        y_pred_train = model.predict(X_train)
+                        y_pred_test = model.predict(X_test)
+                        
+                        train_acc = accuracy(y_train, y_pred_train) * 100
+                        test_acc = accuracy(y_test, y_pred_test) * 100
+
+                        answers_grid['combination'].append(index)
+                        answers_grid['train_accuracy'].append(train_acc)
+                        answers_grid['test_accuracy'].append(test_acc)
+                        answers_grid['colsample_bytree'].append(csbt)
+                        answers_grid['learning_rate'].append(lr)
+                        answers_grid['max_depth'].append(md)
+                        answers_grid['alpha'].append(a)
+                        answers_grid['n_estimators'].append(ne)
+    
+    
     """
     Best hyperparameters :-
-        alpha : 1.00
-        colsample_bytree : 0.90
-        learning_rate : 0.10
-        max_depth : 8.00
-        n_estimators : 50.00
+        alpha : 10
+        colsample_bytree : 0.9
+        learning_rate : 1
+        max_depth : 3
+        n_estimators : 100
         
-    Best score : 78.00%
+    Best score : 81.00%
     """
