@@ -250,7 +250,7 @@ if __name__=="__main__":
     """ HYPERPARAMETER TUNING """
     
     # Using XGBoost (choosing this model since it gave the best performance so far)
-    # We'll define our LOSS metric on the basis of whether or not our data is imbalanced.
+    # Only taking into consideration 2 hyperparameters instead of 5 due to performance issues.\
     
     params_grid = {
             "colsample_bytree": [0.1, 0.3, 0.5, 0.7, 0.9],
