@@ -83,8 +83,6 @@ if __name__ == "__main__":
     df1: pd.DataFrame = fetch_dataset(paths[0])
     df2: pd.DataFrame = fetch_dataset(paths[1])
 
-    """ PREPROCESSING """
-
     # Dropping the rows with NULL values i.e. -99999 in df1
     df1 = df1.loc[df1['Age_Oldest_TL'] != -99999]
 
