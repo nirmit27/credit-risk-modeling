@@ -104,7 +104,7 @@ if __name__ == "__main__":
         f"{os.path.dirname(os.getcwd())}\\datasets\\case_study_merged.xlsx")
     df = pd.read_excel(paths[2], index_col=0)
 
-    """ FEATURE ENGINEERING """
+    """ FEATURE SELECTION """
 
     # Dividing the features into categorical and numerical features seperately
     cat_feats: list[str] = [
@@ -164,9 +164,11 @@ if __name__ == "__main__":
     # Now, we have engineered 37 numerical features.
     df = df[cat_feats + num_feats_cols_kept_2 + ["Approved_Flag"]]
 
-    """ FEATURE SELECTION """
+
+    """ PREPROCESSING """
 
     unique_vals(cat_feats, df)
+
 
     # Performing ENCODING for categorical data in categorical features
 
