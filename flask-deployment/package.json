@@ -4,9 +4,12 @@
   "description": "An ML model for predicting the amount of risk associated with the extension of credit to a borrower.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+     "build:css": "tailwindcss build -i ./static/css/input.css -o ./static/css/output.css"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "tailwindcss": "^3.4.3"
+  }
 }

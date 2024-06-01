@@ -1,2 +1,4 @@
-node_modules
-*.cfg
+*/node_modules
+*/*.cfg
+*/*.ipynb
+*/__pycache__
