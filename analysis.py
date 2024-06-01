@@ -169,7 +169,6 @@ if __name__ == "__main__":
 
     unique_vals(cat_feats, df)
 
-
     # Performing ENCODING for categorical data in categorical features
 
     """
