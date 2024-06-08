@@ -44,7 +44,6 @@ def vif_filter(x: pd.DataFrame, limit: int = 5) -> list[str]:
     return kept_cols
 
 
-
 def rem_outliers(df: pd.DataFrame) -> pd.DataFrame:
     for col in df.columns:
         q3 = np.percentile(df[col], 75)
@@ -59,7 +58,6 @@ def rem_outliers(df: pd.DataFrame) -> pd.DataFrame:
     
     return df
         
-
 
 def fetch_paths() -> list[str]:
     paths: list[str] = []
@@ -80,21 +78,21 @@ if __name__ == "__main__":
     
     print(df.info())
     
-    # Removing unnecessary columns
+    # Dropping unnecessary columns
     df.drop(columns = ['Bank name', 'Year'], inplace=True)
     
-    # Handling outliers
+    # Handling the outliers
     df = rem_outliers(df)
     
     # Data splitting
     X = df.drop(columns=['Basic EPS (Rs.)'])
     y = df['Basic EPS (Rs.)']
     
-    # Removing multi-collinearity
+    # Removing multi-collinearity using VIF
     kept_cols: list[str] = vif_filter(x=X, limit=100)
     X = df[kept_cols]
     
-    # Standard scaling
+    # Standard scaling the features
     ss = SS()
     X = ss.fit_transform(X)
     
