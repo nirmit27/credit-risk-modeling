@@ -138,7 +138,7 @@ if __name__ == "__main__":
     print(f"R-square : {r2}\nRMSE : {rmse}\nRMSE/Standard Deviation : {stddevdiff}")
         
     
-    """  """
+    """ Results """
     # R-squared           = 0.80
     # RMSE                = 8.40
     # RMSE/Std. Deviation = 2.32
