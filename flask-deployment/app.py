@@ -47,7 +47,10 @@ def index():
 
     return render_template("index.html", title="Inputs", subtitle=subtitle, fields=fields, values=values, result=result)
 
+
 if __name__ == "__main__":
-    # subprocess.run(["npm", "i", "tailwindcss"], check=True)
-    # subprocess.run(["npm", "run", "build:css"], check=True)
-    app.run(debug=True, port=port)
+    subprocess.run(["npm", "i", "tailwindcss"], check=True)
+    subprocess.run(["npm", "run", "build:css"], check=True)
+
+    # app.run(debug=True, port=port)
+    app.run(debug=True)

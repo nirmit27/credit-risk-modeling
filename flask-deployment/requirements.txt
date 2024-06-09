@@ -1,0 +1,6 @@
+pandas
+numpy
+flask
+Pyarrow
+opendatasets
+Gunicorn
