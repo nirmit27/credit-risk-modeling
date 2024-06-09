@@ -4,11 +4,7 @@ Training **[XGBoost](https://xgboost.readthedocs.io/en/stable/)** classification
 
 ### Preview
 
-<!--
 ![Screenshot](/flask-deployment/static/ss.png)
--->
-
-<img src="/flask-deployment/static/ss.png" height="470" width="500">
 
 ### Dataset links
 
