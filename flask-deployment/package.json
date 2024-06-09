@@ -1,8 +1,8 @@
 {
   "name": "credit-risk-modelling",
   "version": "1.0.0",
-  "description": "An ML model for predicting the amount of risk associated with the extension of credit to a borrower.",
-  "main": "index.js",
+  "description": "An ML model for predicting the amount of basic EPS.",
+  "main": "app.py",
   "scripts": {
      "build:css": "tailwindcss build -i ./static/css/input.css -o ./static/css/output.css"
   },
