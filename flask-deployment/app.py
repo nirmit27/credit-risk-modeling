@@ -1,12 +1,6 @@
 import pickle
 import subprocess
-from configparser import ConfigParser as cfgp
 from flask import Flask, render_template, request, url_for
-
-config = cfgp()
-config.read('settings.cfg')
-config_section = config['DEPLOYMENT']
-port: int = int(config_section['PORT'])
 
 result: str = ""
 values: list[float] = []
@@ -52,5 +46,4 @@ if __name__ == "__main__":
     subprocess.run(["npm", "i", "tailwindcss"], check=True)
     subprocess.run(["npm", "run", "build:css"], check=True)
 
-    # app.run(debug=True, port=port)
     app.run(debug=True)
