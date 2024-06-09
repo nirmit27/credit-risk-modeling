@@ -7,7 +7,7 @@
      "build:css": "tailwindcss build -i ./static/css/input.css -o ./static/css/output.css"
   },
   "keywords": [],
-  "author": "",
+  "author": "nirmit27",
   "license": "ISC",
   "dependencies": {
     "tailwindcss": "^3.4.3"
