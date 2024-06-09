@@ -1,5 +1,9 @@
+pickle
+statsmodels
+sklearn
 pandas
 numpy
+xgboost
 flask
 Pyarrow
 opendatasets
