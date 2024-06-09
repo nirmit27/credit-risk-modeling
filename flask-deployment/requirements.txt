@@ -1,6 +1,6 @@
 pickle
 statsmodels
-sklearn
+scikit-learn
 pandas
 numpy
 xgboost
