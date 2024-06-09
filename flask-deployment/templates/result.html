@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Credit Risk Prediction | Results</title>
+    <title>EPS Prediction | {{ title }}</title>
 
     <!-- TAILWIND CSS -->
     <link href="{{url_for('static',filename='css/output.css')}}" rel="stylesheet">
@@ -16,9 +16,12 @@
     <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
 </head>
 
-<body>
-    <h1 class="block">{{ name }}</h1>
-    <h1 class="block">{{ email }}</h1>
+<body class="bg-slate-200 flex justify-center items-center h-screen flex-col">
+    <div class="">
+        <h1 class="text-3xl font-semibold">{{ title }} : <strong class="font-bold text-blue-700">{{ result }}</strong>
+        </h1>
+        <a href="/">Return</a>
+    </div>
 </body>
 
 </html>

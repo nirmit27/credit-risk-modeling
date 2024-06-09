@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Credit Risk Prediction | Home</title>
+    <title>EPS Prediction | {{ title }}</title>
 
     <!-- TAILWIND CSS -->
     <link href="{{url_for('static',filename='css/output.css')}}" rel="stylesheet">
@@ -16,14 +16,26 @@
     <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
 </head>
 
-<body class="bg-slate-200 flex justify-center items-center h-screen flex-col">
-    <h1 class="block text-3xl font-semibold text-slate-500 mb-12">{{ title }}</h1>
-    <form method="post" class="flex justify-center items-center flex-col gap-2">
-        <label for="name" class="">Username</label>
-        <input type="text" class="" name="name" id="name" required>
-        <label for="email" class="">Email</label>
-        <input type="email" class="" name="email" id="email" required>
-        <input type="submit" class="" value="Submit">
+<body class="flex h-screen items-center justify-center bg-slate-200">
+    <form action="/predict" method="post"
+        class="grid grid-cols-2 grid-rows-6 gap-x-8 gap-y-4 rounded-md border border-slate-400 pt-12 pb-6 px-10 bg-white shadow-md">
+        <h1 class="col-span-2 text-center text-3xl font-bold text-slate-800">{{ subtitle }}</h1>
+
+        {% for field in fields %}
+
+        <div class="">
+            <label for={{field}} class="block font-semibold mb-1">{{field}}</label>
+            <input type="text" name={{field}} id={{field}}
+                class="border border-blue-300 rounded-md p-1 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-800 w-full"
+                required />
+        </div>
+
+        {% endfor %}
+
+        <button type="reset"
+            class="rounded-md border border-red-600 bg-red-500 font-semibold text-white mt-4 h-12 hover:bg-red-600 focus:bg-red-600 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-700">Reset</button>
+        <button type="submit"
+            class="rounded-md border border-blue-600 bg-blue-500 font-semibold text-white mt-4 h-12 hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700">Submit</button>
     </form>
 </body>
 
