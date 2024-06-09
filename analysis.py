@@ -300,11 +300,11 @@ if __name__ == "__main__":
 
     """
     Best hyperparameters :-
-        alpha : 10
-        colsample_bytree : 0.9
-        learning_rate : 1
-        max_depth : 3
-        n_estimators : 100
+        alpha             : 10
+        colsample_bytree  : 0.9
+        learning_rate     : 1
+        max_depth         : 3
+        n_estimators      : 100
         
-    Best score : 81.00%
+    Best accuracy score   : 81.00%
     """
