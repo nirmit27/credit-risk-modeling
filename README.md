@@ -1,6 +1,17 @@
-# Credit Risk Modelling
+# Credit Risk Modelling and EPS Prediction
 
-An attempt at **ML modelling** for predicting the amount of risk associated with the extension of credit to a borrower.
+Training **[XGBoost](https://xgboost.readthedocs.io/en/stable/)** classification and regression models for predicting the amount of **risk** associated with the extension of credit to a borrower and for predicting the basic **EPS** amount.
 
-### Links
-> [Notes](https://drive.google.com/drive/folders/1J4IHFxI6vVhDrjr0lkJxrV3qz5sKOSqV?usp=drive_link)
+### Preview
+
+![Screenshot](/flask-deployment/static/ss.png)
+
+### Dataset links
+
+- [Credit Risk Dataset](./data/case_study_final.xlsx)
+
+- [EPS Dataset](./data/EPS_Dataset.xlsx)
+
+### Deployment link
+
+[Web Service on Render](https://credit-risk-modelling.onrender.com/)
