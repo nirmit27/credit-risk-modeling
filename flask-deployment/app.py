@@ -14,8 +14,8 @@ app = Flask(__name__)
 
 @app.route('/', methods=["GET", "POST"])
 def index():
-    result = ""
-    values = []
+    result: str = ""
+    values: list[float] = []
     if request.method == "POST":
         v1: float = float(request.form.get('ROCE (%)', "0.00"))
         v2: float = float(request.form.get('CASA (%)', "0.00"))
