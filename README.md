@@ -1,4 +1,4 @@
-# Credit Risk Modelling and EPS Prediction
+# Credit Risk Modeling and EPS Prediction
 
 Training **[XGBoost](https://xgboost.readthedocs.io/en/stable/)** classification and regression models for predicting the amount of **risk** associated with the extension of credit to a borrower and for predicting the basic **EPS** amount.
 
